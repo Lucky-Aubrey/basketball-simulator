@@ -1,8 +1,8 @@
 import { courtToPixel } from "./geometry.js";
 
-function drawDot(ctx, x, y, color, label) {
+function drawDot(ctx, x, y, color, label, radius = 10) {
   ctx.beginPath();
-  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fillStyle = color;
   ctx.fill();
   ctx.fillStyle = "#000";
@@ -11,10 +11,10 @@ function drawDot(ctx, x, y, color, label) {
   ctx.fillText(label, x, y + 3);
 }
 
-export function drawPlayers(ctx, width, height, positions) {
+export function drawPlayers(ctx, width, height, positions, offenseRadii = {}) {
   for (const [id, [x, y]] of Object.entries(positions.offense || {})) {
     const [px, py] = courtToPixel(x, y, width, height);
-    drawDot(ctx, px, py, "#1e88e5", id);
+    drawDot(ctx, px, py, "#1e88e5", id, offenseRadii[id] || 10);
   }
   for (const [id, [x, y]] of Object.entries(positions.defense || {})) {
     const [px, py] = courtToPixel(x, y, width, height);
