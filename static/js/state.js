@@ -18,3 +18,47 @@ export function createEmptyPlay() {
     },
   };
 }
+
+export function addAction(play, playerId, action) {
+  const player = play.offense.find((p) => p.id === playerId);
+  player.actions.push(action);
+  player.actions.sort((a, b) => a.start_t - b.start_t);
+  return play;
+}
+
+export function removeAction(play, playerId, actionIndex) {
+  const player = play.offense.find((p) => p.id === playerId);
+  player.actions.splice(actionIndex, 1);
+  return play;
+}
+
+export function reorderAction(play, playerId, fromIndex, toIndex) {
+  const player = play.offense.find((p) => p.id === playerId);
+  const [action] = player.actions.splice(fromIndex, 1);
+  player.actions.splice(toIndex, 0, action);
+  return play;
+}
+
+export class History {
+  constructor() {
+    this.past = [];
+    this.future = [];
+  }
+
+  push(snapshot) {
+    this.past.push(structuredClone(snapshot));
+    this.future = [];
+  }
+
+  undo(current) {
+    if (this.past.length === 0) return current;
+    this.future.push(structuredClone(current));
+    return this.past.pop();
+  }
+
+  redo(current) {
+    if (this.future.length === 0) return current;
+    this.past.push(structuredClone(current));
+    return this.future.pop();
+  }
+}
