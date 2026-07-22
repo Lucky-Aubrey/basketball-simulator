@@ -18,7 +18,7 @@ wireSaveLoad(play, (loaded) => {
 
 const playback = createPlaybackController(play, (frame) => {
   drawCourt(ctx, canvas.width, canvas.height);
-  drawPlayers(ctx, canvas.width, canvas.height, { offense: frame.offense, defense: {} });
+  drawPlayers(ctx, canvas.width, canvas.height, { offense: frame.offense, defense: frame.defense });
 });
 
 const placement = createPlacementEditor(play, canvas, () => playback.scrubTo(playback.getTime()));
