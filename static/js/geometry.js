@@ -6,14 +6,14 @@ export const COURT_Y_MAX = 47;
 export function courtToPixel(x, y, canvasWidth, canvasHeight) {
   const scale = canvasWidth / (COURT_X_MAX - COURT_X_MIN);
   const px = (x - COURT_X_MIN) * scale;
-  const py = canvasHeight - (y - COURT_Y_MIN) * scale;
+  const py = (y - COURT_Y_MIN) * scale;
   return [px, py];
 }
 
 export function pixelToCourt(px, py, canvasWidth, canvasHeight) {
   const scale = canvasWidth / (COURT_X_MAX - COURT_X_MIN);
   const x = px / scale + COURT_X_MIN;
-  const y = (canvasHeight - py) / scale + COURT_Y_MIN;
+  const y = py / scale + COURT_Y_MIN;
   return [x, y];
 }
 

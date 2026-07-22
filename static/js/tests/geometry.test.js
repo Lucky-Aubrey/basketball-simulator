@@ -10,8 +10,8 @@ import {
 } from "../geometry.js";
 
 test("courtToPixel maps court origin and bounds to canvas pixels", () => {
-  assert.deepEqual(courtToPixel(0, 0, 500, 470), [250, 470]);
-  assert.deepEqual(courtToPixel(-25, 47, 500, 470), [0, 0]);
+  assert.deepEqual(courtToPixel(0, 0, 500, 470), [250, 0]);
+  assert.deepEqual(courtToPixel(-25, 47, 500, 470), [0, 470]);
 });
 
 test("pixelToCourt inverts courtToPixel", () => {

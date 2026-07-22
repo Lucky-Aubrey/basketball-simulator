@@ -8,7 +8,7 @@ export function drawCourt(ctx, width, height) {
   // court outline
   ctx.strokeRect(0, 0, width, height);
 
-  // half-court line (top edge, y=47)
+  // half-court line (bottom edge, y=47)
   const [x1, y1] = courtToPixel(-25, 47, width, height);
   const [x2] = courtToPixel(25, 47, width, height);
   ctx.beginPath();
@@ -25,6 +25,6 @@ export function drawCourt(ctx, width, height) {
   const [cx, cy] = courtToPixel(0, 0, width, height);
   const scale = width / (25 - -25);
   ctx.beginPath();
-  ctx.arc(cx, cy, 23.75 * scale, Math.PI, 2 * Math.PI);
+  ctx.arc(cx, cy, 23.75 * scale, 0, Math.PI);
   ctx.stroke();
 }
