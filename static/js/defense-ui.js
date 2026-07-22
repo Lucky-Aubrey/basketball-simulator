@@ -3,7 +3,7 @@ const DEFENSE_IDS = ["D1", "D2", "D3", "D4", "D5"];
 
 export function wireManDefenseUI(play) {
   const container = document.getElementById("man-assignments");
-  for (const offenseId of OFFENSE_IDS) {
+  OFFENSE_IDS.forEach((offenseId, index) => {
     const label = document.createElement("label");
     label.textContent = `${offenseId} guarded by: `;
     const select = document.createElement("select");
@@ -13,25 +13,38 @@ export function wireManDefenseUI(play) {
       option.textContent = defenseId;
       select.appendChild(option);
     }
-    select.value = play.defense.man.assignments[offenseId] || "";
+    if (!play.defense.man.assignments[offenseId]) {
+      play.defense.man.assignments[offenseId] = DEFENSE_IDS[index];
+    }
+    select.value = play.defense.man.assignments[offenseId];
     select.addEventListener("change", () => {
       play.defense.man.assignments[offenseId] = select.value;
     });
-    play.defense.man.assignments[offenseId] = select.value;
     label.appendChild(select);
     container.appendChild(label);
-  }
+  });
 
-  document.getElementById("help-scheme").addEventListener("change", (event) => {
+  const helpSchemeSelect = document.getElementById("help-scheme");
+  helpSchemeSelect.value = play.defense.man.help_scheme;
+  helpSchemeSelect.addEventListener("change", (event) => {
     play.defense.man.help_scheme = event.target.value;
   });
-  document.getElementById("param-lag").addEventListener("input", (event) => {
+
+  const lagInput = document.getElementById("param-lag");
+  lagInput.value = play.defense.man.params.lag;
+  lagInput.addEventListener("input", (event) => {
     play.defense.man.params.lag = parseFloat(event.target.value);
   });
-  document.getElementById("param-help-weight").addEventListener("input", (event) => {
+
+  const helpWeightInput = document.getElementById("param-help-weight");
+  helpWeightInput.value = play.defense.man.params.help_weight;
+  helpWeightInput.addEventListener("input", (event) => {
     play.defense.man.params.help_weight = parseFloat(event.target.value);
   });
-  document.getElementById("param-rim-bias").addEventListener("input", (event) => {
+
+  const rimBiasInput = document.getElementById("param-rim-bias");
+  rimBiasInput.value = play.defense.man.params.rim_bias;
+  rimBiasInput.addEventListener("input", (event) => {
     play.defense.man.params.rim_bias = parseFloat(event.target.value);
   });
 }
