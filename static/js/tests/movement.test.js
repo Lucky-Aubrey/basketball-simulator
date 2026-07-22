@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { capMovement } from "../movement.js";
+import { capMovement, separateOverlaps } from "../movement.js";
 
 test("returns targetPos when within reach", () => {
   const result = capMovement([0, 0], [1, 0], 10, 1);
@@ -16,4 +16,15 @@ test("caps movement along the correct direction for diagonal targets", () => {
   const result = capMovement([0, 0], [3, 4], 2.5, 1);
   assert.ok(Math.abs(result[0] - 1.5) < 1e-9);
   assert.ok(Math.abs(result[1] - 2) < 1e-9);
+});
+
+test("separateOverlaps pushes apart two positions closer than minDistance", () => {
+  const result = separateOverlaps({ A: [0, 0], B: [1, 0] }, 2);
+  const d = Math.hypot(result.A[0] - result.B[0], result.A[1] - result.B[1]);
+  assert.ok(d >= 2 - 1e-9);
+});
+
+test("separateOverlaps leaves already-separated positions unchanged", () => {
+  const input = { A: [0, 0], B: [10, 0] };
+  assert.deepEqual(separateOverlaps(input, 2), input);
 });

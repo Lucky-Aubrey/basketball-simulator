@@ -1,7 +1,9 @@
 import { simulateFrame } from "./simulate.js";
-import { capMovement } from "./movement.js";
+import { capMovement, separateOverlaps, clampAllToCourt } from "./movement.js";
+import { clampPointToCourt } from "./geometry.js";
 
 const MAX_DEFENDER_SPEED = 15; // feet per second
+const MIN_PLAYER_SEPARATION = 1.5;
 
 export function createPlaybackController(play, onFrame) {
   let t = 0;
@@ -15,10 +17,17 @@ export function createPlaybackController(play, onFrame) {
     const nextPositions = {};
     for (const [id, target] of Object.entries(frame.defenseTargets)) {
       const prev = defenderPositions[id] || target;
-      nextPositions[id] = capMovement(prev, target, MAX_DEFENDER_SPEED, dt);
+      nextPositions[id] = capMovement(prev, clampPointToCourt(target), MAX_DEFENDER_SPEED, dt);
     }
-    defenderPositions = nextPositions;
-    onFrame({ offense: frame.offense, ball: frame.ball, defense: defenderPositions }, t);
+    const separated = separateOverlaps({ ...frame.offense, ...nextPositions }, MIN_PLAYER_SEPARATION);
+    const clamped = clampAllToCourt(separated);
+
+    defenderPositions = {};
+    for (const id of Object.keys(nextPositions)) defenderPositions[id] = clamped[id];
+    const offense = {};
+    for (const id of Object.keys(frame.offense)) offense[id] = clamped[id];
+
+    onFrame({ offense, ball: frame.ball, defense: defenderPositions }, t);
   }
 
   function tick(timestamp) {
