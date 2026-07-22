@@ -15,6 +15,12 @@ function clampToMaxShade(home, target, maxShade) {
   return lerpPoint(home, target, maxShade / d);
 }
 
+// NOTE: gap-shade currently shades toward the offensive player nearest THIS
+// defender's home point (i.e., already-covered), not toward an "uncovered"
+// player as the design doc describes. See
+// docs/superpowers/specs/2026-07-22-play-simulator-spec1-design.md "Zone"
+// section. Needs reconciliation: either the design doc or this
+// implementation should change.
 export function zoneDefenderTargets(play, t) {
   const { ball_shade_weight, gap_shade_weight, max_shade } = play.defense.zone.params;
   const { holder } = ballStateAt(play, t);
