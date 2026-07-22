@@ -31,3 +31,25 @@ test("during the second action, interpolates from its own start", () => {
 test("after the last action, position holds at its target", () => {
   assert.deepEqual(playerPositionAt(player, 100), [10, 10]);
 });
+
+const passingPlayer = {
+  id: "O2",
+  start_pos: [5, 5],
+  actions: [
+    { type: "pass", start_t: 1.0, duration: 0.3, target_player: "O3" },
+    { type: "cut", start_t: 2.0, duration: 2.0, target_pos: [15, 5] },
+  ],
+};
+
+test("a pass/handoff action (no target_pos) does not move the player", () => {
+  assert.deepEqual(playerPositionAt(passingPlayer, 0), [5, 5]);
+  assert.deepEqual(playerPositionAt(passingPlayer, 1.0), [5, 5]);
+  assert.deepEqual(playerPositionAt(passingPlayer, 1.15), [5, 5]);
+  assert.deepEqual(playerPositionAt(passingPlayer, 1.3), [5, 5]);
+});
+
+test("an action after a pass/handoff continues from the pre-pass position", () => {
+  assert.deepEqual(playerPositionAt(passingPlayer, 2.0), [5, 5]);
+  assert.deepEqual(playerPositionAt(passingPlayer, 3.0), [10, 5]);
+  assert.deepEqual(playerPositionAt(passingPlayer, 4.0), [15, 5]);
+});
