@@ -4,13 +4,14 @@ import { createEmptyPlay, History } from "./state.js";
 import { createPlacementEditor, wireSaveLoad } from "./editor.js";
 import { createTimelineEditor } from "./timeline.js";
 import { createPlaybackController } from "./playback.js";
-import { wireManDefenseUI } from "./defense-ui.js";
+import { wireManDefenseUI, wireZoneDefenseUI } from "./defense-ui.js";
 
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
 const play = createEmptyPlay();
 
 wireManDefenseUI(play);
+wireZoneDefenseUI(play);
 
 const history = new History();
 createTimelineEditor(play, history, () => {});

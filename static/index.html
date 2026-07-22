@@ -54,6 +54,12 @@
     <button id="redo-btn">Redo</button>
   </div>
   <div id="defense-config">
+    <label>Defense mode:
+      <select id="defense-mode">
+        <option value="man">Man-to-man</option>
+        <option value="zone">Zone</option>
+      </select>
+    </label>
     <fieldset>
       <legend>Man-to-man assignments</legend>
       <div id="man-assignments"></div>
@@ -67,6 +73,20 @@
     <label>Lag (s): <input id="param-lag" type="number" step="0.05" value="0.3"></label>
     <label>Help weight: <input id="param-help-weight" type="number" step="0.05" value="0.4"></label>
     <label>Rim bias: <input id="param-rim-bias" type="number" step="0.05" value="0.2"></label>
+    <div id="zone-config" style="display:none">
+      <label>Zone type:
+        <select id="zone-type">
+          <option value="2-3">2-3</option>
+          <option value="3-2">3-2</option>
+          <option value="1-3-1">1-3-1</option>
+          <option value="box-and-1">Box-and-1</option>
+        </select>
+      </label>
+      <label>Ball shade weight: <input id="zone-ball-shade" type="number" step="0.05" value="0.5"></label>
+      <label>Gap shade weight: <input id="zone-gap-shade" type="number" step="0.05" value="0.3"></label>
+      <label>Max shade: <input id="zone-max-shade" type="number" step="0.5" value="8"></label>
+      <label id="box-one-target-label" style="display:none">Box-and-1 man mark (O id): <input id="box-one-target" value="O1"></label>
+    </div>
   </div>
   <script type="module" src="/js/main.js"></script>
 </body>
