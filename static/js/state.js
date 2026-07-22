@@ -19,16 +19,38 @@ export function createEmptyPlay() {
   };
 }
 
+function ballEventForAction(playerId, action) {
+  if (action.type !== "pass" && action.type !== "handoff") return null;
+  return { t: action.start_t, action: action.type, from: playerId, to: action.target_player };
+}
+
 export function addAction(play, playerId, action) {
   const player = play.offense.find((p) => p.id === playerId);
   player.actions.push(action);
   player.actions.sort((a, b) => a.start_t - b.start_t);
+
+  const event = ballEventForAction(playerId, action);
+  if (event) {
+    play.ball.events.push(event);
+    play.ball.events.sort((a, b) => a.t - b.t);
+  }
   return play;
 }
 
 export function removeAction(play, playerId, actionIndex) {
   const player = play.offense.find((p) => p.id === playerId);
-  player.actions.splice(actionIndex, 1);
+  const [removed] = player.actions.splice(actionIndex, 1);
+
+  if (removed && (removed.type === "pass" || removed.type === "handoff")) {
+    const idx = play.ball.events.findIndex(
+      (e) =>
+        e.t === removed.start_t &&
+        e.action === removed.type &&
+        e.from === playerId &&
+        e.to === removed.target_player
+    );
+    if (idx !== -1) play.ball.events.splice(idx, 1);
+  }
   return play;
 }
 

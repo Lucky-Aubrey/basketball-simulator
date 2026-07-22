@@ -72,3 +72,47 @@ test("History undo with empty stack returns current unchanged", () => {
   const current = { count: 1 };
   assert.deepEqual(history.undo(current), current);
 });
+
+test("addAction with a pass action creates a matching ball event", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O1", { type: "pass", start_t: 2.0, duration: 0.3, target_player: "O2" });
+  assert.deepEqual(play.ball.events, [{ t: 2.0, action: "pass", from: "O1", to: "O2" }]);
+});
+
+test("addAction with a handoff action creates a matching ball event", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O1", { type: "handoff", start_t: 1.5, duration: 0.3, target_player: "O3" });
+  assert.deepEqual(play.ball.events, [{ t: 1.5, action: "handoff", from: "O1", to: "O3" }]);
+});
+
+test("addAction with a non-pass/handoff action does not touch ball.events", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O1", { type: "cut", start_t: 1.0, duration: 1.0, target_pos: [5, 5] });
+  assert.deepEqual(play.ball.events, []);
+});
+
+test("ball.events stays sorted by t after multiple pass/handoff actions", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O2", { type: "pass", start_t: 3.0, duration: 0.3, target_player: "O3" });
+  addAction(play, "O1", { type: "pass", start_t: 1.0, duration: 0.3, target_player: "O2" });
+  assert.deepEqual(
+    play.ball.events.map((e) => e.t),
+    [1.0, 3.0]
+  );
+});
+
+test("removeAction removes the matching ball event for a pass/handoff action", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O1", { type: "pass", start_t: 2.0, duration: 0.3, target_player: "O2" });
+  removeAction(play, "O1", 0);
+  assert.deepEqual(play.ball.events, []);
+});
+
+test("removeAction leaves ball.events untouched for a non-pass/handoff action", () => {
+  const play = createEmptyPlay();
+  addAction(play, "O1", { type: "pass", start_t: 2.0, duration: 0.3, target_player: "O2" });
+  addAction(play, "O1", { type: "cut", start_t: 5.0, duration: 1.0, target_pos: [5, 5] });
+  const cutIndex = play.offense.find((p) => p.id === "O1").actions.findIndex((a) => a.type === "cut");
+  removeAction(play, "O1", cutIndex);
+  assert.deepEqual(play.ball.events, [{ t: 2.0, action: "pass", from: "O1", to: "O2" }]);
+});
