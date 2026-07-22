@@ -32,3 +32,21 @@ test("simulateFrame includes man-to-man defenseTargets when mode is man", () => 
   const frame = simulateFrame(manPlay, 0);
   assert.deepEqual(frame.defenseTargets.D1, [0, 10]);
 });
+
+test("simulateFrame includes zone defenseTargets when mode is zone", () => {
+  const zonePlay = {
+    offense: [{ id: "O1", start_pos: [0, 20], actions: [] }],
+    ball: { start_holder: "O1", events: [] },
+    defense: {
+      mode: "zone",
+      man: null,
+      zone: {
+        type: "2-3",
+        home_points: { D1: [-10, 18], D2: [10, 18], D3: [-15, 4], D4: [0, 3], D5: [15, 4] },
+        params: { ball_shade_weight: 0, gap_shade_weight: 0, max_shade: 100 },
+      },
+    },
+  };
+  const frame = simulateFrame(zonePlay, 0);
+  assert.deepEqual(frame.defenseTargets.D1, [-10, 18]);
+});
