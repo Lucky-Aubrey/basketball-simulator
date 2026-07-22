@@ -1,12 +1,16 @@
 import { drawCourt } from "./court.js";
 import { drawPlayers } from "./render.js";
 import { createEmptyPlay } from "./state.js";
-import { createPlacementEditor } from "./editor.js";
+import { createPlacementEditor, wireSaveLoad } from "./editor.js";
 
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
 const play = createEmptyPlay();
 const placement = createPlacementEditor(play, canvas);
+
+wireSaveLoad(play, (loaded) => {
+  Object.assign(play, loaded);
+});
 
 function render() {
   drawCourt(ctx, canvas.width, canvas.height);

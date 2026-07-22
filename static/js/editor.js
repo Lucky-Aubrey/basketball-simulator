@@ -1,4 +1,5 @@
 import { pixelToCourt } from "./geometry.js";
+import { fetchPlayNames, fetchPlay, savePlay } from "./api.js";
 
 const PLAYER_IDS = { offense: ["O1", "O2", "O3", "O4", "O5"], defense: ["D1", "D2", "D3", "D4", "D5"] };
 
@@ -29,4 +30,28 @@ export function createPlacementEditor(play, canvas) {
   });
 
   return { getDefensePositions: () => defensePositions };
+}
+
+export function wireSaveLoad(play, onLoad) {
+  document.getElementById("save-btn").addEventListener("click", async () => {
+    const name = prompt("Play name?", play.name || "");
+    if (!name) return;
+    play.name = name;
+    await savePlay(name, play);
+  });
+
+  const select = document.getElementById("load-select");
+  fetchPlayNames().then((names) => {
+    for (const name of names) {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    }
+  });
+  select.addEventListener("change", async () => {
+    if (!select.value) return;
+    const loaded = await fetchPlay(select.value);
+    onLoad(loaded);
+  });
 }
