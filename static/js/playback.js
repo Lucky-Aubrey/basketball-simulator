@@ -27,7 +27,9 @@ export function createPlaybackController(play, onFrame) {
     const offense = {};
     for (const id of Object.keys(frame.offense)) offense[id] = clamped[id];
 
-    onFrame({ offense, ball: frame.ball, defense: defenderPositions }, t);
+    const ball = { ...frame.ball, pos: offense[frame.ball.holder] || frame.ball.pos };
+
+    onFrame({ offense, ball, defense: defenderPositions }, t);
   }
 
   function tick(timestamp) {

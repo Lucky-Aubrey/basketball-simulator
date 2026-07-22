@@ -21,3 +21,12 @@ export function drawPlayers(ctx, width, height, positions) {
     drawDot(ctx, px, py, "#e53935", id);
   }
 }
+
+export function drawBall(ctx, width, height, pos) {
+  if (!pos) return;
+  const [px, py] = courtToPixel(pos[0], pos[1], width, height);
+  ctx.beginPath();
+  ctx.arc(px, py, 5, 0, 2 * Math.PI);
+  ctx.fillStyle = "#fb8c00";
+  ctx.fill();
+}
