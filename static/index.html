@@ -12,6 +12,34 @@
     <select id="load-select"><option value="">Load a play...</option></select>
   </div>
   <canvas id="court" width="500" height="470"></canvas>
+  <div id="timeline">
+    <select id="player-select">
+      <option value="O1">O1</option>
+      <option value="O2">O2</option>
+      <option value="O3">O3</option>
+      <option value="O4">O4</option>
+      <option value="O5">O5</option>
+    </select>
+    <ul id="action-list"></ul>
+    <form id="add-action-form">
+      <select id="action-type">
+        <option>relocate</option>
+        <option>cut</option>
+        <option>dribble</option>
+        <option>pass</option>
+        <option>screen</option>
+        <option>handoff</option>
+        <option>shot</option>
+      </select>
+      <input id="action-start-t" type="number" step="0.1" placeholder="start_t" required>
+      <input id="action-duration" type="number" step="0.1" placeholder="duration" required>
+      <input id="action-target-x" type="number" step="0.1" placeholder="target x" required>
+      <input id="action-target-y" type="number" step="0.1" placeholder="target y" required>
+      <button type="submit">Add action</button>
+    </form>
+    <button id="undo-btn">Undo</button>
+    <button id="redo-btn">Redo</button>
+  </div>
   <script type="module" src="/js/main.js"></script>
 </body>
 </html>
