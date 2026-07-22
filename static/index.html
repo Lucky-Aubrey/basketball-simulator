@@ -12,6 +12,19 @@
     <select id="load-select"><option value="">Load a play...</option></select>
   </div>
   <canvas id="court" width="500" height="470"></canvas>
+  <div id="transport">
+    <button id="play-btn">Play</button>
+    <button id="pause-btn">Pause</button>
+    <button id="step-back-btn">Step -</button>
+    <button id="step-fwd-btn">Step +</button>
+    <input id="scrub" type="range" min="0" max="30" step="0.1" value="0">
+    <select id="speed-select">
+      <option value="0.25">0.25x</option>
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="2">2x</option>
+    </select>
+  </div>
   <div id="timeline">
     <select id="player-select">
       <option value="O1">O1</option>

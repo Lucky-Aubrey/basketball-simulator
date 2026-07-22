@@ -3,6 +3,7 @@ import { drawPlayers } from "./render.js";
 import { createEmptyPlay, History } from "./state.js";
 import { createPlacementEditor, wireSaveLoad } from "./editor.js";
 import { createTimelineEditor } from "./timeline.js";
+import { createPlaybackController } from "./playback.js";
 
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
@@ -16,14 +17,16 @@ wireSaveLoad(play, (loaded) => {
   Object.assign(play, loaded);
 });
 
-function render() {
+const playback = createPlaybackController(play, (frame) => {
   drawCourt(ctx, canvas.width, canvas.height);
-  const offense = {};
-  for (const p of play.offense) offense[p.id] = p.start_pos;
-  drawPlayers(ctx, canvas.width, canvas.height, {
-    offense,
-    defense: placement.getDefensePositions(),
-  });
-  requestAnimationFrame(render);
-}
-render();
+  drawPlayers(ctx, canvas.width, canvas.height, { offense: frame.offense, defense: {} });
+});
+
+document.getElementById("play-btn").addEventListener("click", () => playback.play());
+document.getElementById("pause-btn").addEventListener("click", () => playback.pause());
+document.getElementById("step-back-btn").addEventListener("click", () => playback.step(-0.1));
+document.getElementById("step-fwd-btn").addEventListener("click", () => playback.step(0.1));
+document.getElementById("scrub").addEventListener("input", (event) => playback.scrubTo(parseFloat(event.target.value)));
+document.getElementById("speed-select").addEventListener("change", (event) => playback.setSpeed(parseFloat(event.target.value)));
+
+playback.scrubTo(0);
