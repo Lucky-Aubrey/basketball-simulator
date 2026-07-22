@@ -8,7 +8,6 @@ import { createPlaybackController } from "./playback.js";
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
 const play = createEmptyPlay();
-const placement = createPlacementEditor(play, canvas);
 
 const history = new History();
 createTimelineEditor(play, history, () => {});
@@ -21,6 +20,8 @@ const playback = createPlaybackController(play, (frame) => {
   drawCourt(ctx, canvas.width, canvas.height);
   drawPlayers(ctx, canvas.width, canvas.height, { offense: frame.offense, defense: {} });
 });
+
+const placement = createPlacementEditor(play, canvas, () => playback.scrubTo(playback.getTime()));
 
 document.getElementById("play-btn").addEventListener("click", () => playback.play());
 document.getElementById("pause-btn").addEventListener("click", () => playback.pause());

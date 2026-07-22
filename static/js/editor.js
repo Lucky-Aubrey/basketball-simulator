@@ -3,7 +3,7 @@ import { fetchPlayNames, fetchPlay, savePlay } from "./api.js";
 
 const PLAYER_IDS = { offense: ["O1", "O2", "O3", "O4", "O5"], defense: ["D1", "D2", "D3", "D4", "D5"] };
 
-export function createPlacementEditor(play, canvas) {
+export function createPlacementEditor(play, canvas, onPlace) {
   const defensePositions = {};
   let mode = "offense";
   let nextIndex = 0;
@@ -27,6 +27,7 @@ export function createPlacementEditor(play, canvas) {
       mode = "defense";
       nextIndex = 0;
     }
+    if (typeof onPlace === "function") onPlace();
   });
 
   return { getDefensePositions: () => defensePositions };
