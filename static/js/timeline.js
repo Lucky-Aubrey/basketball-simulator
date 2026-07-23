@@ -20,6 +20,7 @@ function describeAction(action) {
 export function createTimelineEditor(play, history, actionPicker, onChange) {
   let selectedPlayerId = "O1";
   let pendingTarget = null;
+  let pendingAction = null; // { actingPlayerId, actionType, startT } locked in at "Set Target" click time
 
   function refresh() {
     const list = document.getElementById("action-list");
@@ -61,6 +62,7 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
   });
 
   document.getElementById("set-target-btn").addEventListener("click", () => {
+    const actingPlayerId = selectedPlayerId;
     const actionType = document.getElementById("action-type").value;
     const startT = parseFloat(document.getElementById("action-start-t").value);
     const statusEl = document.getElementById("target-status");
@@ -69,6 +71,7 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
       return;
     }
     pendingTarget = null;
+    pendingAction = null;
     statusEl.textContent =
       actionType === "screen"
         ? "Click the plant position, then the facing point"
@@ -76,33 +79,43 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
         ? "Click the teammate to target"
         : "Click the court";
 
-    actionPicker.startPlacing(selectedPlayerId, actionType, startT, (result) => {
+    const playerSelectEl = document.getElementById("player-select");
+    const actionTypeEl = document.getElementById("action-type");
+    playerSelectEl.disabled = true;
+    actionTypeEl.disabled = true;
+
+    actionPicker.startPlacing(actingPlayerId, actionType, startT, (result) => {
       pendingTarget = result;
+      pendingAction = { actingPlayerId, actionType, startT };
       statusEl.textContent = describeTarget(result);
 
-      const actingPlayer = play.offense.find((p) => p.id === selectedPlayerId);
+      const actingPlayer = play.offense.find((p) => p.id === actingPlayerId);
       const fromPos = playerPositionAt(actingPlayer, startT);
       const toPos = result.target_pos || fromPos;
       const duration = computeDuration(actionType, fromPos, toPos);
       document.getElementById("action-duration").value = duration.toFixed(2);
+
+      playerSelectEl.disabled = false;
+      actionTypeEl.disabled = false;
     });
   });
 
   document.getElementById("add-action-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const statusEl = document.getElementById("target-status");
-    if (!pendingTarget) {
+    if (!pendingTarget || !pendingAction) {
       statusEl.textContent = "Set a target before adding";
       return;
     }
     history.push(play);
-    addAction(play, selectedPlayerId, {
-      type: document.getElementById("action-type").value,
-      start_t: parseFloat(document.getElementById("action-start-t").value),
+    addAction(play, pendingAction.actingPlayerId, {
+      type: pendingAction.actionType,
+      start_t: pendingAction.startT,
       duration: parseFloat(document.getElementById("action-duration").value),
       ...pendingTarget,
     });
     pendingTarget = null;
+    pendingAction = null;
     statusEl.textContent = "No target set";
     refresh();
     onChange();
