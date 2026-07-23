@@ -1,3 +1,5 @@
+import { removeAction } from "./state.js";
+
 const ACTION_COLORS = {
   relocate: "#90a4ae",
   cut: "#42a5f5",
@@ -44,7 +46,7 @@ function renderTimeAxis() {
   return axis;
 }
 
-export function createGanttView(play, container, onSelectPlayer) {
+export function createGanttView(play, container, history, onSelectPlayer, onChange) {
   function render() {
     container.innerHTML = "";
     container.appendChild(renderTimeAxis());
@@ -60,7 +62,7 @@ export function createGanttView(play, container, onSelectPlayer) {
       label.style.top = `${(ROW_HEIGHT - 12) / 2}px`;
       row.appendChild(label);
 
-      for (const action of player.actions) {
+      player.actions.forEach((action, index) => {
         const block = document.createElement("div");
         block.className = "gantt-block";
         block.textContent = action.type;
@@ -72,8 +74,14 @@ export function createGanttView(play, container, onSelectPlayer) {
         block.style.background = ACTION_COLORS[action.type] || "#ccc";
         block.style.cursor = "pointer";
         block.addEventListener("click", () => onSelectPlayer(player.id));
+        block.addEventListener("dblclick", () => {
+          history.push(play);
+          removeAction(play, player.id, index);
+          render();
+          onChange();
+        });
         row.appendChild(block);
-      }
+      });
 
       container.appendChild(row);
     }

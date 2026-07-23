@@ -18,7 +18,13 @@ const zoneDefenseUI = wireZoneDefenseUI(play);
 
 const history = new History();
 const actionPicker = createActionTargetPicker(play, canvas);
-const gantt = createGanttView(play, document.getElementById("gantt"), (id) => timelineEditor.selectPlayer(id));
+const gantt = createGanttView(
+  play,
+  document.getElementById("gantt"),
+  history,
+  (id) => timelineEditor.selectPlayer(id),
+  () => timelineEditor.refresh()
+);
 const timelineEditor = createTimelineEditor(play, history, actionPicker, () => gantt.refresh());
 
 const playback = createPlaybackController(play, (frame, t) => {
