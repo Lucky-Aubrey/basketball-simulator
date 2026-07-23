@@ -7,6 +7,7 @@ import { createPlaybackController } from "./playback.js";
 import { wireManDefenseUI, wireZoneDefenseUI } from "./defense-ui.js";
 import { screenerRadiusMultiplier } from "./screen-visual.js";
 import { createActionTargetPicker } from "./action-placement.js";
+import { createGanttView } from "./gantt.js";
 
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
@@ -17,7 +18,8 @@ const zoneDefenseUI = wireZoneDefenseUI(play);
 
 const history = new History();
 const actionPicker = createActionTargetPicker(play, canvas);
-const timelineEditor = createTimelineEditor(play, history, actionPicker, () => {});
+const gantt = createGanttView(play, document.getElementById("gantt"), (id) => timelineEditor.selectPlayer(id));
+const timelineEditor = createTimelineEditor(play, history, actionPicker, () => gantt.refresh());
 
 const playback = createPlaybackController(play, (frame, t) => {
   drawCourt(ctx, canvas.width, canvas.height);
@@ -34,6 +36,7 @@ wireSaveLoad(play, (loaded) => {
   manDefenseUI.refresh();
   zoneDefenseUI.refresh();
   timelineEditor.refresh();
+  gantt.refresh();
   // Reset to t=0 rather than preserving the scrub position: a freshly loaded
   // play is a new context for the user, and the previous play's timeline
   // position has no guaranteed meaning against the new play's actions/ball

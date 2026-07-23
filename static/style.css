@@ -8,3 +8,18 @@ body {
   background: #d9a066;
   border: 2px solid #333;
 }
+
+.gantt-row {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+}
+
+.gantt-block {
+  color: #000;
+  font-size: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 3px;
+  padding: 2px 4px;
+  box-sizing: border-box;
+}
