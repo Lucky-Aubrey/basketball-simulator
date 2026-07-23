@@ -48,3 +48,19 @@ body {
   height: 12px;
   border-radius: 2px;
 }
+
+.gantt-axis {
+  position: relative;
+  height: 16px;
+  margin-bottom: 2px;
+}
+
+.gantt-tick {
+  position: absolute;
+  top: 0;
+  font-size: 9px;
+  color: #666;
+  border-left: 1px solid #999;
+  padding-left: 2px;
+  height: 100%;
+}

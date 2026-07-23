@@ -11,6 +11,7 @@ const ACTION_COLORS = {
 const PIXELS_PER_SECOND = 40;
 const ROW_HEIGHT = 30;
 const LABEL_WIDTH = 30;
+const MAX_SECONDS = 30; // matches #scrub's max attribute in index.html
 
 function renderLegend() {
   const legend = document.createElement("div");
@@ -30,9 +31,23 @@ function renderLegend() {
   return legend;
 }
 
+function renderTimeAxis() {
+  const axis = document.createElement("div");
+  axis.className = "gantt-axis";
+  for (let s = 0; s <= MAX_SECONDS; s++) {
+    const tick = document.createElement("div");
+    tick.className = "gantt-tick";
+    tick.style.left = `${LABEL_WIDTH + s * PIXELS_PER_SECOND}px`;
+    tick.textContent = `${s}s`;
+    axis.appendChild(tick);
+  }
+  return axis;
+}
+
 export function createGanttView(play, container, onSelectPlayer) {
   function render() {
     container.innerHTML = "";
+    container.appendChild(renderTimeAxis());
     for (const player of play.offense) {
       const row = document.createElement("div");
       row.className = "gantt-row";
