@@ -30,3 +30,18 @@ export function drawBall(ctx, width, height, pos) {
   ctx.fillStyle = "#fb8c00";
   ctx.fill();
 }
+
+// Draws a short line from an armed screen's target_pos toward its facing_pos,
+// indicating which way the screener is facing. See design doc "Screen" data
+// model: facing_pos "is used only for rendering in this spec."
+export function drawScreenFacing(ctx, width, height, targetPos, facingPos) {
+  if (!targetPos || !facingPos) return;
+  const [x1, y1] = courtToPixel(targetPos[0], targetPos[1], width, height);
+  const [x2, y2] = courtToPixel(facingPos[0], facingPos[1], width, height);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = "#333";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}

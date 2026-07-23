@@ -1,11 +1,11 @@
 import { drawCourt } from "./court.js";
-import { drawPlayers, drawBall } from "./render.js";
+import { drawPlayers, drawBall, drawScreenFacing } from "./render.js";
 import { createEmptyPlay, History } from "./state.js";
 import { createPlacementEditor, wireSaveLoad } from "./editor.js";
 import { createTimelineEditor } from "./timeline.js";
 import { createPlaybackController } from "./playback.js";
 import { wireManDefenseUI, wireZoneDefenseUI } from "./defense-ui.js";
-import { screenerRadiusMultiplier } from "./screen-visual.js";
+import { screenerRadiusMultiplier, activeScreenAction } from "./screen-visual.js";
 import { createActionTargetPicker } from "./action-placement.js";
 import { createGanttView } from "./gantt.js";
 
@@ -27,6 +27,10 @@ const playback = createPlaybackController(play, (frame, t) => {
   for (const p of play.offense) offenseRadii[p.id] = 10 * screenerRadiusMultiplier(p, t);
   drawPlayers(ctx, canvas.width, canvas.height, { offense: frame.offense, defense: frame.defense }, offenseRadii);
   drawBall(ctx, canvas.width, canvas.height, frame.ball && frame.ball.pos);
+  for (const p of play.offense) {
+    const action = activeScreenAction(p, t);
+    if (action) drawScreenFacing(ctx, canvas.width, canvas.height, action.target_pos, action.facing_pos);
+  }
   document.getElementById("time-readout").textContent = t.toFixed(1) + "s";
 });
 
