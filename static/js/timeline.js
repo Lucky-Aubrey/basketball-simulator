@@ -61,6 +61,19 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
     refresh();
   });
 
+  function setDropdownsDisabled(disabled) {
+    document.getElementById("player-select").disabled = disabled;
+    document.getElementById("action-type").disabled = disabled;
+  }
+
+  function cancelPlacement() {
+    actionPicker.cancel();
+    pendingTarget = null;
+    pendingAction = null;
+    document.getElementById("target-status").textContent = "No target set";
+    setDropdownsDisabled(false);
+  }
+
   document.getElementById("set-target-btn").addEventListener("click", () => {
     const actingPlayerId = selectedPlayerId;
     const actionType = document.getElementById("action-type").value;
@@ -79,10 +92,7 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
         ? "Click the teammate to target"
         : "Click the court";
 
-    const playerSelectEl = document.getElementById("player-select");
-    const actionTypeEl = document.getElementById("action-type");
-    playerSelectEl.disabled = true;
-    actionTypeEl.disabled = true;
+    setDropdownsDisabled(true);
 
     actionPicker.startPlacing(actingPlayerId, actionType, startT, (result) => {
       pendingTarget = result;
@@ -95,9 +105,18 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
       const duration = computeDuration(actionType, fromPos, toPos);
       document.getElementById("action-duration").value = duration.toFixed(2);
 
-      playerSelectEl.disabled = false;
-      actionTypeEl.disabled = false;
+      setDropdownsDisabled(false);
     });
+  });
+
+  document.getElementById("cancel-target-btn").addEventListener("click", () => {
+    cancelPlacement();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && actionPicker.isPlacing()) {
+      cancelPlacement();
+    }
   });
 
   document.getElementById("add-action-form").addEventListener("submit", (event) => {
