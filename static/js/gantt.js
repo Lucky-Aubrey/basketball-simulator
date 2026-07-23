@@ -12,6 +12,24 @@ const PIXELS_PER_SECOND = 40;
 const ROW_HEIGHT = 30;
 const LABEL_WIDTH = 30;
 
+function renderLegend() {
+  const legend = document.createElement("div");
+  legend.className = "gantt-legend";
+  for (const [type, color] of Object.entries(ACTION_COLORS)) {
+    const item = document.createElement("span");
+    item.className = "gantt-legend-item";
+
+    const swatch = document.createElement("span");
+    swatch.className = "gantt-legend-swatch";
+    swatch.style.background = color;
+    item.appendChild(swatch);
+
+    item.appendChild(document.createTextNode(type));
+    legend.appendChild(item);
+  }
+  return legend;
+}
+
 export function createGanttView(play, container, onSelectPlayer) {
   function render() {
     container.innerHTML = "";
@@ -44,6 +62,7 @@ export function createGanttView(play, container, onSelectPlayer) {
 
       container.appendChild(row);
     }
+    container.appendChild(renderLegend());
   }
 
   render();
