@@ -56,9 +56,51 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
     });
   }
 
+  function refreshPassTargetOptions() {
+    const select = document.getElementById("pass-target-select");
+    const actionType = document.getElementById("action-type").value;
+    const isPassType = actionType === "pass" || actionType === "handoff";
+    select.style.display = isPassType ? "" : "none";
+    if (!isPassType) return;
+    select.innerHTML = '<option value="">Select receiver...</option>';
+    for (const p of play.offense) {
+      if (p.id === selectedPlayerId) continue;
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = p.id;
+      select.appendChild(option);
+    }
+  }
+
   document.getElementById("player-select").addEventListener("change", (event) => {
     selectedPlayerId = event.target.value;
     refresh();
+    refreshPassTargetOptions();
+  });
+
+  document.getElementById("action-type").addEventListener("change", refreshPassTargetOptions);
+
+  document.getElementById("pass-target-select").addEventListener("change", (event) => {
+    const targetId = event.target.value;
+    if (!targetId) return;
+    const actionType = document.getElementById("action-type").value;
+    const startT = parseFloat(document.getElementById("action-start-t").value);
+    const statusEl = document.getElementById("target-status");
+    if (Number.isNaN(startT)) {
+      statusEl.textContent = "Set a start time first";
+      return;
+    }
+    actionPicker.cancel();
+    setDropdownsDisabled(false);
+
+    pendingTarget = { target_player: targetId };
+    pendingAction = { actingPlayerId: selectedPlayerId, actionType, startT };
+    statusEl.textContent = describeTarget(pendingTarget);
+
+    const actingPlayer = play.offense.find((p) => p.id === selectedPlayerId);
+    const fromPos = playerPositionAt(actingPlayer, startT);
+    const duration = computeDuration(actionType, fromPos, fromPos);
+    document.getElementById("action-duration").value = duration.toFixed(2);
   });
 
   function setDropdownsDisabled(disabled) {
@@ -153,6 +195,7 @@ export function createTimelineEditor(play, history, actionPicker, onChange) {
   });
 
   refresh();
+  refreshPassTargetOptions();
   return {
     selectPlayer: (id) => {
       selectedPlayerId = id;
