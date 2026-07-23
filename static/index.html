@@ -47,9 +47,9 @@
         <option>shot</option>
       </select>
       <input id="action-start-t" type="number" step="0.1" placeholder="start_t" required>
-      <input id="action-duration" type="number" step="0.1" placeholder="duration" required>
-      <input id="action-target-x" type="number" step="0.1" placeholder="target x" required>
-      <input id="action-target-y" type="number" step="0.1" placeholder="target y" required>
+      <button type="button" id="set-target-btn">Set Target</button>
+      <span id="target-status">No target set</span>
+      <input id="action-duration" type="number" step="any" placeholder="duration">
       <button type="submit">Add action</button>
     </form>
     <button id="undo-btn">Undo</button>

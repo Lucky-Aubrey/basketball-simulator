@@ -6,6 +6,7 @@ import { createTimelineEditor } from "./timeline.js";
 import { createPlaybackController } from "./playback.js";
 import { wireManDefenseUI, wireZoneDefenseUI } from "./defense-ui.js";
 import { screenerRadiusMultiplier } from "./screen-visual.js";
+import { createActionTargetPicker } from "./action-placement.js";
 
 const canvas = document.getElementById("court");
 const ctx = canvas.getContext("2d");
@@ -15,7 +16,8 @@ const manDefenseUI = wireManDefenseUI(play);
 const zoneDefenseUI = wireZoneDefenseUI(play);
 
 const history = new History();
-const timelineEditor = createTimelineEditor(play, history, () => {});
+const actionPicker = createActionTargetPicker(play, canvas);
+const timelineEditor = createTimelineEditor(play, history, actionPicker, () => {});
 
 const playback = createPlaybackController(play, (frame, t) => {
   drawCourt(ctx, canvas.width, canvas.height);

@@ -1,7 +1,25 @@
 import { addAction, removeAction, reorderAction, History } from "./state.js";
+import { playerPositionAt } from "./offense.js";
+import { computeDuration } from "./action-defaults.js";
 
-export function createTimelineEditor(play, history, onChange) {
+function describeTarget(target) {
+  if (!target) return "No target set";
+  if (target.target_player) return `Target: pass/handoff to ${target.target_player}`;
+  if (target.facing_pos) {
+    return `Target: screen at [${target.target_pos.map((n) => n.toFixed(1))}] facing [${target.facing_pos.map((n) => n.toFixed(1))}]`;
+  }
+  return `Target: [${target.target_pos.map((n) => n.toFixed(1))}]`;
+}
+
+function describeAction(action) {
+  if (action.target_player) return `-> pass/handoff to ${action.target_player}`;
+  if (action.facing_pos) return `-> [${action.target_pos}] facing [${action.facing_pos}]`;
+  return `-> [${action.target_pos}]`;
+}
+
+export function createTimelineEditor(play, history, actionPicker, onChange) {
   let selectedPlayerId = "O1";
+  let pendingTarget = null;
 
   function refresh() {
     const list = document.getElementById("action-list");
@@ -9,7 +27,7 @@ export function createTimelineEditor(play, history, onChange) {
     const player = play.offense.find((p) => p.id === selectedPlayerId);
     player.actions.forEach((action, index) => {
       const li = document.createElement("li");
-      li.textContent = `${action.type} @ t=${action.start_t} (${action.duration}s) -> [${action.target_pos}]`;
+      li.textContent = `${action.type} @ t=${action.start_t} (${action.duration}s) ${describeAction(action)}`;
 
       const removeBtn = document.createElement("button");
       removeBtn.textContent = "Remove";
@@ -42,18 +60,50 @@ export function createTimelineEditor(play, history, onChange) {
     refresh();
   });
 
+  document.getElementById("set-target-btn").addEventListener("click", () => {
+    const actionType = document.getElementById("action-type").value;
+    const startT = parseFloat(document.getElementById("action-start-t").value);
+    const statusEl = document.getElementById("target-status");
+    if (Number.isNaN(startT)) {
+      statusEl.textContent = "Set a start time first";
+      return;
+    }
+    pendingTarget = null;
+    statusEl.textContent =
+      actionType === "screen"
+        ? "Click the plant position, then the facing point"
+        : actionType === "pass" || actionType === "handoff"
+        ? "Click the teammate to target"
+        : "Click the court";
+
+    actionPicker.startPlacing(selectedPlayerId, actionType, startT, (result) => {
+      pendingTarget = result;
+      statusEl.textContent = describeTarget(result);
+
+      const actingPlayer = play.offense.find((p) => p.id === selectedPlayerId);
+      const fromPos = playerPositionAt(actingPlayer, startT);
+      const toPos = result.target_pos || fromPos;
+      const duration = computeDuration(actionType, fromPos, toPos);
+      document.getElementById("action-duration").value = duration.toFixed(2);
+    });
+  });
+
   document.getElementById("add-action-form").addEventListener("submit", (event) => {
     event.preventDefault();
+    const statusEl = document.getElementById("target-status");
+    if (!pendingTarget) {
+      statusEl.textContent = "Set a target before adding";
+      return;
+    }
     history.push(play);
     addAction(play, selectedPlayerId, {
       type: document.getElementById("action-type").value,
       start_t: parseFloat(document.getElementById("action-start-t").value),
       duration: parseFloat(document.getElementById("action-duration").value),
-      target_pos: [
-        parseFloat(document.getElementById("action-target-x").value),
-        parseFloat(document.getElementById("action-target-y").value),
-      ],
+      ...pendingTarget,
     });
+    pendingTarget = null;
+    statusEl.textContent = "No target set";
     refresh();
     onChange();
   });
@@ -71,5 +121,12 @@ export function createTimelineEditor(play, history, onChange) {
   });
 
   refresh();
-  return { selectPlayer: (id) => { selectedPlayerId = id; refresh(); }, refresh };
+  return {
+    selectPlayer: (id) => {
+      selectedPlayerId = id;
+      document.getElementById("player-select").value = id;
+      refresh();
+    },
+    refresh,
+  };
 }
