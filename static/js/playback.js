@@ -2,7 +2,7 @@ import { simulateFrame } from "./simulate.js";
 import { capMovement, separateOverlaps, clampAllToCourt } from "./movement.js";
 import { clampPointToCourt } from "./geometry.js";
 
-const MAX_DEFENDER_SPEED = 15; // feet per second
+const MAX_DEFENDER_SPEED = 10; // feet per second
 const MIN_PLAYER_SEPARATION = 1.5;
 
 export function createPlaybackController(play, onFrame) {

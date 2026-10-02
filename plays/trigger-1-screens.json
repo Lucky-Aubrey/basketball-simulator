@@ -1,0 +1,169 @@
+{
+  "name": "trigger-1-screens",
+  "offense": [
+    {
+      "id": "O1",
+      "start_pos": [
+        7.2010416030883775,
+        28.861804962158203
+      ],
+      "actions": [
+        {
+          "type": "pass",
+          "start_t": 1.5,
+          "duration": 0.3,
+          "target_player": "O3"
+        },
+        {
+          "type": "relocate",
+          "start_t": 2,
+          "duration": 2.69,
+          "target_pos": [
+            6.001041603088378,
+            1.9618049621582032
+          ]
+        },
+        {
+          "type": "relocate",
+          "start_t": 6,
+          "duration": 2.13,
+          "target_pos": [
+            21.00104160308838,
+            17.061804962158202
+          ]
+        }
+      ]
+    },
+    {
+      "id": "O2",
+      "start_pos": [
+        -12.098958396911621,
+        29.161804962158204
+      ],
+      "actions": [
+        {
+          "type": "relocate",
+          "start_t": 6.5,
+          "duration": 1.57,
+          "target_pos": [
+            -17.298958396911623,
+            14.350694274902343
+          ]
+        }
+      ]
+    },
+    {
+      "id": "O3",
+      "start_pos": [
+        21.80104160308838,
+        10.461804962158203
+      ],
+      "actions": [
+        {
+          "type": "relocate",
+          "start_t": 0,
+          "duration": 1.22,
+          "target_pos": [
+            20.80104160308838,
+            22.661804962158204
+          ]
+        },
+        {
+          "type": "pass",
+          "start_t": 4,
+          "duration": 0.3,
+          "target_player": "O5"
+        },
+        {
+          "type": "screen",
+          "start_t": 5.5,
+          "duration": 1.99,
+          "target_pos": [
+            9.201041603088377,
+            6.461804962158203
+          ],
+          "facing_pos": [
+            4.501041603088378,
+            3.261804962158203
+          ]
+        }
+      ]
+    },
+    {
+      "id": "O4",
+      "start_pos": [
+        -22.498958396911622,
+        9.861804962158203
+      ],
+      "actions": [
+        {
+          "type": "screen",
+          "start_t": 3.5,
+          "duration": 1.63,
+          "target_pos": [
+            -11.498958396911622,
+            21.950694274902343
+          ],
+          "facing_pos": [
+            -9.498958396911622,
+            25.050694274902344
+          ]
+        }
+      ]
+    },
+    {
+      "id": "O5",
+      "start_pos": [
+        2.4010416030883803,
+        18.7618049621582
+      ],
+      "actions": [
+        {
+          "type": "relocate",
+          "start_t": 3,
+          "duration": 1.15,
+          "target_pos": [
+            8.501041603088382,
+            28.561804962158202
+          ]
+        }
+      ]
+    }
+  ],
+  "ball": {
+    "start_holder": "O1",
+    "events": [
+      {
+        "t": 1.5,
+        "action": "pass",
+        "from": "O1",
+        "to": "O3"
+      },
+      {
+        "t": 4,
+        "action": "pass",
+        "from": "O3",
+        "to": "O5"
+      }
+    ]
+  },
+  "defense": {
+    "mode": "man",
+    "man": {
+      "assignments": {
+        "O1": "D1",
+        "O2": "D2",
+        "O3": "D3",
+        "O4": "D4",
+        "O5": "D5"
+      },
+      "help_scheme": "uniform",
+      "params": {
+        "lag": 0.3,
+        "help_weight": 0.05,
+        "rim_bias": 0.3
+      }
+    },
+    "zone": null
+  }
+}
