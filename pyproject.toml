@@ -1,7 +1,7 @@
 [project]
 name = "basketball-defense-simulator"
 version = "0.1.0"
-description = "Add your description here"
+description = "Browser-based half-court play designer with a rule-based, tunable defense simulation"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
